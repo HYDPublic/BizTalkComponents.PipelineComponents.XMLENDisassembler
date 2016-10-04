@@ -1,0 +1,4 @@
+﻿<ns2:charge xmlns:ns2="http://BizTalkComponents.PipelineComponents.charges">
+    <Type>Type_2</Type>
+    <Amount>10.4</Amount>
+  </ns2:charge>

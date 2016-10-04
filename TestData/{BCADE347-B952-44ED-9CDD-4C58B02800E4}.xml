@@ -1,0 +1,3 @@
+﻿<ns2:Transaction Id="tran1" xmlns:ns2="http://BizTalkComponents.PipelineComponents.TransactionsSchema">
+      <Name>Name_0</Name>
+    </ns2:Transaction>

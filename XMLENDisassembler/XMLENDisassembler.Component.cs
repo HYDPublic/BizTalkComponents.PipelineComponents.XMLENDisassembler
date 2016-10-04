@@ -15,6 +15,8 @@ using Microsoft.BizTalk.Component.Interop;
 using Microsoft.BizTalk.ScalableTransformation;
 using Microsoft.XLANGs.RuntimeTypes;
 using BizTalkComponents.Utils;
+using Microsoft.BizTalk.Component.Utilities;
+using propertyHelper = Microsoft.BizTalk.Component.PropertyHelper;
 
 namespace BizTalkComponents.PipelineComponents
 {
@@ -24,21 +26,21 @@ namespace BizTalkComponents.PipelineComponents
     /// </summary>
     public partial class XMLENDisassembler: IBaseComponent,IPersistPropertyBag
     {
-
+      
       
         #region IBaseComponent Members
 
-        public string Description
+        public  string Description
         {
             get { return "Envelope Normalize XML Disassembler"; }
         }
 
-        public string Name
+        public  string Name
         {
             get { return "Envelope Normalize Disassembler"; }
         }
 
-        public string Version
+        public  string Version
         {
             get { return "1.0.0"; }
         }
@@ -52,7 +54,7 @@ namespace BizTalkComponents.PipelineComponents
 
         void IPersistPropertyBag.InitNew()
         {
-            base.InitNew();
+            return;
         }
         /// <summary>
         /// Loads configuration property for component.
@@ -62,9 +64,40 @@ namespace BizTalkComponents.PipelineComponents
         void IPersistPropertyBag.Load(Microsoft.BizTalk.Component.Interop.IPropertyBag pb, Int32 errlog)
         {
 
-            messageType = BizTalkComponents.Utils.PropertyBagHelper.ReadPropertyBag(pb, "MessageType", messageType);
-            base.Load(pb, errlog);
+            string strEnvelopes = (string)propertyHelper.ReadPropertyBag(pb, "EnvelopeSpecNames");
+            if (strEnvelopes != null && strEnvelopes.Length > 0)
+            {
+               
+                string[] strEnvArray = strEnvelopes.Split('|');
+               
+                this.envelopeSpecNames.Clear();
+                for (int lowerBound = strEnvArray.GetLowerBound(0); lowerBound <= strEnvArray.GetUpperBound(0); ++lowerBound)
+                {
+                    Schema schema = new Schema(strEnvArray[lowerBound]);
+                    this.envelopeSpecNames.Add(schema);
+                }
+               
+            }
 
+            string strDocuments = (string)propertyHelper.ReadPropertyBag(pb, "DocumentSpecNames");
+            if (strDocuments != null && strDocuments.Length > 0)
+            {
+
+                string[] strDocArray = strDocuments.Split('|');
+
+                this.DocumentSpecNames.Clear();
+                for (int lowerBound = strDocArray.GetLowerBound(0); lowerBound <= strDocArray.GetUpperBound(0); ++lowerBound)
+                {
+                    Schema schema = new Schema(strDocArray[lowerBound]);
+                    this.DocumentSpecNames.Add(schema);
+                }
+
+            }
+            
+            this.RecoverableInterchangeProcessing = PropertyBagHelper.ReadPropertyBag<Boolean>(pb, "RecoverableInterchangeProcessing", this.RecoverableInterchangeProcessing);
+            this.ValidateDocument = PropertyBagHelper.ReadPropertyBag<Boolean>(pb, "ValidateDocument", this.ValidateDocument);
+            
+           
         }
 
         /// <summary>
@@ -75,10 +108,41 @@ namespace BizTalkComponents.PipelineComponents
         /// <param name="fSaveAllProperties">Not used.</param>
         void IPersistPropertyBag.Save(Microsoft.BizTalk.Component.Interop.IPropertyBag pb, bool fClearDirty, bool fSaveAllProperties)
         {
-            BizTalkComponents.Utils.PropertyBagHelper.WritePropertyBag(pb, "MessageType", messageType);
-            base.Save(pb, fClearDirty, fSaveAllProperties);
+            string envelopeSpecNames = String.Empty;
+            foreach (var item in this.EnvelopeSpecNames)
+            {
+                if(envelopeSpecNames == String.Empty)
+                {
+                    envelopeSpecNames = item.SchemaName;
+                    continue;
+                }
+
+                envelopeSpecNames += String.Format("|{0}",item.SchemaName);
+               
+            }
+
+            string documentSpecNames = String.Empty;
+            foreach (var item in this.documentSpecNames)
+            {
+                if (documentSpecNames == String.Empty)
+                {
+                    documentSpecNames = item.SchemaName;
+                    continue;
+                }
+
+                documentSpecNames += String.Format("|{0}", item.SchemaName);
+
+            }
+            PropertyBagHelper.WritePropertyBag(pb, "DocumentSpecNames", documentSpecNames);
+            PropertyBagHelper.WritePropertyBag(pb, "EnvelopeSpecNames", envelopeSpecNames);
+            PropertyBagHelper.WritePropertyBag(pb, "RecoverableInterchangeProcessing", this.RecoverableInterchangeProcessing);
+            PropertyBagHelper.WritePropertyBag(pb, "ValidateDocument", this.ValidateDocument);
+          
+            
+         
 
         }
+
         
     }
 

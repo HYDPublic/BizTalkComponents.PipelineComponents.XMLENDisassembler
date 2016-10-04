@@ -39,7 +39,7 @@
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BizTalkComponents.PipelineComponents.XMLENDisassembler, Version=1.0.0.1, Culture=neutral, PublicKeyToken=47190f56632fbc76, processorArchitecture=MSIL" />
+    <Reference Include="BizTalkComponents.PipelineComponents.XMLENDisassembler, Version=1.0.2.4, Culture=neutral, PublicKeyToken=47190f56632fbc76, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -72,8 +72,8 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Pipeline Include="XMLENDisassemblerReceivePipeline.btp">
-      <TypeName>XMLENDisassemblerReceivePipeline</TypeName>
+    <Pipeline Include="XMLENDisassemblerPipeline.btp">
+      <TypeName>XMLENDisassemblerPipeline</TypeName>
       <Namespace>BizTalkComponents.PipelineComponents</Namespace>
       <SubType>Designer</SubType>
     </Pipeline>
